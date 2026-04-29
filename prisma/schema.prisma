@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Uom {
+  id          BigInt        @id @default(autoincrement())
+  name        String        @unique @db.VarChar(15)
+  description String?       @db.Text
+  tests       MedicalTest[]
+
+  @@map("uom")
+}
+
+model TestCategory {
+  id          BigInt        @id @default(autoincrement())
+  name        String        @unique @db.VarChar(50)
+  description String?       @db.Text
+  tests       MedicalTest[]
+
+  @@map("testcategories")
+}
+
+model MedicalTest {
+  id          BigInt        @id @default(autoincrement())
+  name        String        @unique @db.VarChar(50)
+  description String?       @db.Text
+  iduom       BigInt?
+  idcategory  BigInt?
+  normalmin   Float?        @db.Real
+  normalmax   Float?        @db.Real
+
+  uom         Uom?          @relation(fields: [iduom], references: [id])
+  category    TestCategory? @relation(fields: [idcategory], references: [id])
+
+  @@map("medicaltests")
+}
